@@ -1,0 +1,15 @@
+mcp
+ollama
+openai
+python-dotenv
+pandas
+plotly
+wordcloud
+matplotlib
+seaborn
+numpy
+pingouin
+statsmodels
+beautifulsoup4
+ddgs
+playwright
