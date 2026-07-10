@@ -43,13 +43,13 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 # ── Configuration ──────────────────────────────────────────────────────────
-PLANNER_MODEL        = "qwen3-coder-30b-a3b-instruct"   # change to any model you have
-WORKER_MODEL         = "qwen3-coder-30b-a3b-instruct"   # can differ from planner
+PLANNER_MODEL        = "minimax-m2.7"   # change to any model you have
+WORKER_MODEL         = "gpt-oss-120b"   # can differ from planner
 MAX_PARALLEL_WORKERS = 3      # max workers running simultaneously
 PLANNER_TICK_SECONDS = 100    # how often planner re-evaluates
-WORKER_MAX_ITERS     = 30     # max tool calls per worker task
-WORKER_MAX_TOKENS    = 8000
-PLANNER_MAX_TOKENS   = 3000
+WORKER_MAX_ITERS     = 300     # max tool calls per worker task
+WORKER_MAX_TOKENS    = 10000
+PLANNER_MAX_TOKENS   = 8000
 WRAP_UP_SECONDS      = 180    # stop starting new tasks when this much time is left
 # ───────────────────────────────────────────────────────────────────────────
 
@@ -467,10 +467,11 @@ PLANNING RULES:
    - All workers for the same project must receive the SAME project directory path.
 
 AUTONOMOUS MODE IDEAS (no user task given):
-  - Build a polished Streamlit or Flask web app around a useful feature
+  - Build a polished Streamlit or Flask web app or JavaScript or any framework you choose around a useful feature
   - Scrape interesting public data, analyze it, produce charts and a written summary
   - Create a CLI tool or Python library with tests and README
   - Research a technology topic and produce a mini-tutorial with working code examples
+  - Come up with your own ideas sometimes 
   Do something genuinely creative and useful. Never just print Hello World.
 """
 
@@ -831,13 +832,18 @@ async def main() -> None:
     args = parser.parse_args()
 
     seconds = _parse_time(args.time)
-    goal = args.task.strip() or (
-        "AUTONOMOUS MODE: You have creative freedom. Build something genuinely useful and impressive "
-        "using the available tools. Ideas: a polished Streamlit or Flask web app, a Python CLI tool "
-        "with README and tests, a web scraper that collects and presents interesting data, "
-        "or a research report with working code examples. "
-        "Avoid trivial outputs. Aim to produce something a developer would actually want to use."
-    )
+    if args.task.strip():
+        goal = args.task.strip()
+    else:
+        import random
+        _ideas = ['Build a Streamlit app that tracks live currency exchange rates using a free API and shows trends over time.', 'Build a Flask REST API with a simple web UI that converts Markdown files to styled HTML and lets you download the result.', 'Create a Python CLI tool that stores timestamped notes in a local SQLite DB, with search and export to markdown.', 'Build a Streamlit dashboard that reads a local CSV the user uploads and auto-generates a summary report with key stats and charts.', 'Scrape the top posts from Hacker News (news.ycombinator.com) and build a clean static HTML digest page with links and summaries.', 'Build a password strength checker web app (Flask) that also generates strong passwords and explains why weak ones are risky.', 'Create a Python package that diffs two text files and outputs a colored side-by-side HTML report.', 'Build a Streamlit app that takes a URL, fetches the page, and produces a clean readable summary using text extraction.', 'Create a CLI tool that monitors a directory for file changes and logs a timestamped change history to a local file.', 'Build a Flask app that generates QR codes from URLs or text, with a gallery of previously generated codes stored locally.', 'Create a Python script that fetches open astronomy data (e.g. NASA APOD API) and builds a static HTML photo gallery.', 'Build a Streamlit quiz app that reads questions from a YAML file and tracks scores across sessions in SQLite.', 'Build a local bookmark manager as a Flask web app: save URLs with tags, search them, and export to HTML.', 'Create a Python tool that converts a folder of images to a single PDF or a zipped set of thumbnails.', 'Build a Streamlit app that generates word clouds and basic text stats from any text file the user uploads.']
+        _pick = random.choice(_ideas)
+        goal = (
+            f"AUTONOMOUS MODE: Your task for this session is: {_pick} "
+            "Build something that actually runs. Test it, fix errors, and leave clear instructions "
+            "on how to launch it. Always create a dedicated project directory under the home folder "
+            "never write files directly into the home root."
+        )
 
     api_key = (
         os.environ.get("API_KEY") or os.environ.get("api_key") or ""
