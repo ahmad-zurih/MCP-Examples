@@ -832,18 +832,14 @@ async def main() -> None:
     args = parser.parse_args()
 
     seconds = _parse_time(args.time)
-    if args.task.strip():
-        goal = args.task.strip()
-    else:
-        import random
-        _ideas = ['Build a Streamlit app that tracks live currency exchange rates using a free API and shows trends over time.', 'Build a Flask REST API with a simple web UI that converts Markdown files to styled HTML and lets you download the result.', 'Create a Python CLI tool that stores timestamped notes in a local SQLite DB, with search and export to markdown.', 'Build a Streamlit dashboard that reads a local CSV the user uploads and auto-generates a summary report with key stats and charts.', 'Scrape the top posts from Hacker News (news.ycombinator.com) and build a clean static HTML digest page with links and summaries.', 'Build a password strength checker web app (Flask) that also generates strong passwords and explains why weak ones are risky.', 'Create a Python package that diffs two text files and outputs a colored side-by-side HTML report.', 'Build a Streamlit app that takes a URL, fetches the page, and produces a clean readable summary using text extraction.', 'Create a CLI tool that monitors a directory for file changes and logs a timestamped change history to a local file.', 'Build a Flask app that generates QR codes from URLs or text, with a gallery of previously generated codes stored locally.', 'Create a Python script that fetches open astronomy data (e.g. NASA APOD API) and builds a static HTML photo gallery.', 'Build a Streamlit quiz app that reads questions from a YAML file and tracks scores across sessions in SQLite.', 'Build a local bookmark manager as a Flask web app: save URLs with tags, search them, and export to HTML.', 'Create a Python tool that converts a folder of images to a single PDF or a zipped set of thumbnails.', 'Build a Streamlit app that generates word clouds and basic text stats from any text file the user uploads.']
-        _pick = random.choice(_ideas)
-        goal = (
-            f"AUTONOMOUS MODE: Your task for this session is: {_pick} "
-            "Build something that actually runs. Test it, fix errors, and leave clear instructions "
-            "on how to launch it. Always create a dedicated project directory under the home folder "
-            "never write files directly into the home root."
-        )
+    goal = args.task.strip() or (
+        "AUTONOMOUS MODE: You have complete creative freedom for this session. "
+        "Decide what to build entirely on your own — a web app, a CLI tool, a data pipeline, "
+        "an API, a game, a utility, anything you find genuinely interesting or useful. "
+        "Do NOT default to GitHub trending scrapers or weather apps. Surprise us. "
+        "Whatever you build must actually run. Create a dedicated project directory, "
+        "write clean code, test it, fix errors, and leave clear launch instructions."
+    )
 
     api_key = (
         os.environ.get("API_KEY") or os.environ.get("api_key") or ""
